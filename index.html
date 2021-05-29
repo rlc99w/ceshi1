@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>图片瀑布墙</title>
+  <style>
+    * { margin: 0; padding: 0; }
+    .main-container {
+      margin: 0 auto;
+    }
+
+    .main-container div {
+      position: absolute;
+      transition: all .3s;
+      border-radius: 3px;
+      box-sizing: border-box;
+      border: 1px solid #999;
+      background: #ccc;
+      padding: 5px;
+      width: 220px;
+    }
+
+    .main-container div img {
+      display: block;
+      width: 100%;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="main-container">
+    <div class="image-container"><img src="images/P_000.jpg"></div>
+    <div class="image-container"><img src="images/P_001.jpg"></div>
+    <div class="image-container"><img src="images/P_002.jpg"></div>
+    <div class="image-container"><img src="images/P_003.jpg"></div>
+    <div class="image-container"><img src="images/P_004.jpg"></div>
+    <div class="image-container"><img src="images/P_005.jpg"></div>
+    <div class="image-container"><img src="images/P_006.jpg"></div>
+    <div class="image-container"><img src="images/P_007.jpg"></div>
+    <div class="image-container"><img src="images/P_008.jpg"></div>
+    <div class="image-container"><img src="images/P_009.jpg"></div>
+    <div class="image-container"><img src="images/P_010.jpg"></div>
+    <div class="image-container"><img src="images/P_011.jpg"></div>
+    <div class="image-container"><img src="images/P_012.jpg"></div>
+    <div class="image-container"><img src="images/P_013.jpg"></div>
+    <div class="image-container"><img src="images/P_014.jpg"></div>
+    <div class="image-container"><img src="images/P_015.jpg"></div>
+    <div class="image-container"><img src="images/P_016.jpg"></div>
+    <div class="image-container"><img src="images/P_017.jpg"></div>
+    <div class="image-container"><img src="images/P_018.jpg"></div>
+    <div class="image-container"><img src="images/P_019.jpg"></div>
+    <div class="image-container"><img src="images/P_020.jpg"></div>
+    <div class="image-container"><img src="images/P_021.jpg"></div>
+    <div class="image-container"><img src="images/P_022.jpg"></div>
+    <div class="image-container"><img src="images/P_023.jpg"></div>
+    <div class="image-container"><img src="images/P_024.jpg"></div>
+    <div class="image-container"><img src="images/P_025.jpg"></div>
+    <div class="image-container"><img src="images/P_026.jpg"></div>
+    <div class="image-container"><img src="images/P_027.jpg"></div>
+    <div class="image-container"><img src="images/P_028.jpg"></div>
+    <div class="image-container"><img src="images/P_029.jpg"></div>
+    <div class="image-container"><img src="images/P_030.jpg"></div>
+    <div class="image-container"><img src="images/P_031.jpg"></div>
+  </div>
+  <script>
+    /* 以上的原理就是，
+      先把html的node全部放在一个数组里，长度为len，
+      然后根据cloCount创建一个cloCount长度的数组col,初始化全部为0，遍历node(len次),每次找到col中高度最短的，找到最短的索引min，
+      然后把node里面当前的元素放在min处，也就是给该元素赋top,left值。
+      最后再找出col高度最高的，把外面的容器的height修改成这个最高的高度。*/
+    class Waterfall {
+      constructor({ className, itemClassName, nodeWidth, gap }) {
+        // 间隙
+        this.gap = gap || 10;
+        // 容器样式名
+        this.className = className;
+
+        this.itemNodes = document.getElementsByClassName(itemClassName);
+
+        // 节点宽度
+        this.nodeWidth = nodeWidth || parseInt(document.defaultView.getComputedStyle(this.itemNodes[0]).width);
+      }
+      init() {
+        // 获取容器宽度
+        this.containerNode = document.getElementsByClassName(this.className)[0];
+        let containerWidth = parseInt(document.defaultView.getComputedStyle(this.containerNode).width);
+
+        // 单行数量
+        this.countOnRow = parseInt(containerWidth / this.nodeWidth);
+        
+        this.colHeights = new Array(this.countOnRow).fill(0);
+        this.setStyle()
+      }
+      // 获取当前列表最小索引
+      getMinIndex(list) {
+        let minIndex = 0;
+        for (const i in list) {
+          if (list[i] <  list[minIndex]) {
+            minIndex = i
+          }
+        }
+        return minIndex
+      }
+      // 设置样式
+      setStyle() {
+        for (let i = 0; i < this.itemNodes.length; i++) {
+          const node = this.itemNodes[i];
+
+          // 获取存放位置
+          let colIndex = this.getMinIndex(this.colHeights);
+
+          // 设置位置
+          node.style.left = `${this.nodeWidth * colIndex + this.gap * colIndex}px`;
+          node.style.top = `${this.colHeights[colIndex]}px`;
+          
+          this.colHeights[colIndex] += parseInt(document.defaultView.getComputedStyle(node).height) + this.gap
+        }
+      }
+    }
+
+    window.onload = () => {
+      let wf = new Waterfall({
+        className: 'main-container',
+        itemClassName: 'image-container',
+        gap: 12
+      });
+      wf.init()
+
+      window.onresize = () => {
+        wf.init()
+      }
+    }
+  </script>
+<body>
+        这是网页的内容
+        <a href="http://www.baidu.com" target="_blank">百度</a>
+</body>
+</body>
+
+</html>
